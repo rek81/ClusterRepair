@@ -269,20 +269,25 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
     int irow = int(pix.x) - row_offset;
     int icol = int(pix.y) - col_offset;
     // &&& Do we ever get pixels that are out of bounds ???  Need to check.
+    DetId id = (theDetParam.theDet->geographicalId());
     if ((irow < mrow) & (icol < mcol))
       clustMatrix[irow][icol] = float(pix.adc);
-    if (irow == 2){
-      clustMatrix[irow][icol] = 0;
-      std::cout << "matrix row 2 is " << clustMatrix[irow][icol] << std::endl;
+
+    if (mcol > 3 && int(ttopo_.layer(id)) == 1){
+      if (icol == 2) {
+	clustMatrix[irow][icol] = 0;
+	std::cout << "clustMatrix for mcol/2 is " << clustMatrix[irow][icol] << std::endl;
+      }
+      if (icol == 1) {
+	std::cout << "clustMatrix for mcol/2-1 is " << clustMatrix[irow][icol] << std::endl;
+      }
+      if (icol == 3) {
+	std::cout << "clustMatrix for mcol/2+1 is " << clustMatrix[irow][icol] << std::endl;
+      }
+
+
     }
-    if (irow == 1){
-      //      clustMatrix[irow][icol] = 0;
-      std::cout << "matrix row 1 is " << clustMatrix[irow][icol] << std::endl;
-    }
-    if (irow == 3){
-      //      clustMatrix[irow][icol] = 0;
-      std::cout << "matrix row 3 is " << clustMatrix[irow][icol] << std::endl;
-    }
+    else{ continue;}
   }
   // &&& Save for later: fillClustMatrix( float * clustMatrix );
 
@@ -739,12 +744,11 @@ PixelCPEClusterRepair::Rule::Rule(const std::string& str) {
         << "Detector '" << match[1].first << "' not understood. Should be PXB, PXE.\n";
   }
   // layer (if present)
-  //  if (match[3].first != match[3].second) {
+  if (match[3].first != match[3].second) {
     layer_ = atoi(match[3].first);
-    //    std::cout << "layer is " << atoi(match[3].third) << std::endl;
-    //  } else {
-    //    layer_ = 0;
-    //  }
+  } else {
+    layer_ = 0;
+  }
 }  //end Rule::Rule
 
 void PixelCPEClusterRepair::fillPSetDescription(edm::ParameterSetDescription& desc) {
