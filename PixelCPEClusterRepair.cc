@@ -31,6 +31,19 @@ namespace {
   constexpr int cluster_matrix_size_y = 21;
 }  // namespace
 
+
+    float** setup_2d_array(int size1, int size2){
+      float **a = new float*[size1];
+      for(int j=0; j< size1; j++){
+        a[j] = new float[size2];
+	std::cout << "Cluster is " << a[j] << std::endl;
+
+      }
+
+      return a;
+    }
+  
+
 //-----------------------------------------------------------------------------
 //  Constructor.
 //
@@ -272,8 +285,12 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
     DetId id = (theDetParam.theDet->geographicalId());
     if ((irow < mrow) & (icol < mcol))
       clustMatrix[irow][icol] = float(pix.adc);
+    
 
-    if (mcol > 3 && int(ttopo_.layer(id)) == 1){
+    if (mcol > 3 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+            setup_2d_array(theClusterParam.theCluster->sizeX(), theClusterParam.theCluster->sizeY());
+      //      std::cout << "Cluster size is  " << theClusterParam.theCluster->size() << std::endl;
+      //      std::cout << "Cluster Y is  " << theClusterParam.theCluster->y() << std::endl;
       if (icol == 2) {
 	clustMatrix[irow][icol] = 0;
 	std::cout << "clustMatrix for mcol/2 is " << clustMatrix[irow][icol] << std::endl;
@@ -284,8 +301,6 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
       if (icol == 3) {
 	std::cout << "clustMatrix for mcol/2+1 is " << clustMatrix[irow][icol] << std::endl;
       }
-
-
     }
     else{ continue;}
   }
@@ -604,7 +619,8 @@ void PixelCPEClusterRepair::checkRecommend2D(DetParam const& theDetParam,
   float nydiff = templ.clsleny() - nypix;
   float qratio = theClusterParam.theCluster->charge() / templ.qavg();
 
-  if (nydiff > maxSizeMismatchInY_ && qratio < minChargeRatio_) {
+  //  if (nydiff > maxSizeMismatchInY_ && qratio < minChargeRatio_) {
+  if (int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
     // If the cluster is shorter than expected and has less charge, likely
     // due to truncated cluster, try 2D reco
 
@@ -619,10 +635,11 @@ void PixelCPEClusterRepair::checkRecommend2D(DetParam const& theDetParam,
     //determine edge flag based on sign of cot(beta)
     //cot(beta) > 0 means charge was lost at the begining of the cluster (option 1)
     //cot(beta) < 0 means charge was lost at the end of the cluster (option 2)
-    if(theClusterParam.cotbeta > 0) 
-        theClusterParam.edgeTypeY_ = 1;
-    else
-        theClusterParam.edgeTypeY_ = 2;
+    //    if(theClusterParam.cotbeta > 0) 
+    //        theClusterParam.edgeTypeY_ = 1;
+    //    else
+    //        theClusterParam.edgeTypeY_ = 2;
+    theClusterParam.edgeTypeY_ = 0;
   
 
     /*
