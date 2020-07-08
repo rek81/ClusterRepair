@@ -32,18 +32,6 @@ namespace {
 }  // namespace
 
 
-    float** setup_2d_array(int size1, int size2){
-      float **a = new float*[size1];
-      for(int j=0; j< size1; j++){
-        a[j] = new float[size2];
-	std::cout << "Cluster is " << a[j] << std::endl;
-
-      }
-
-      return a;
-    }
-  
-
 //-----------------------------------------------------------------------------
 //  Constructor.
 //
@@ -287,10 +275,16 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
       clustMatrix[irow][icol] = float(pix.adc);
     
 
-    if (mcol > 3 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
-            setup_2d_array(theClusterParam.theCluster->sizeX(), theClusterParam.theCluster->sizeY());
-      //      std::cout << "Cluster size is  " << theClusterParam.theCluster->size() << std::endl;
-      //      std::cout << "Cluster Y is  " << theClusterParam.theCluster->y() << std::endl;
+    if (mcol > 3 && mrow <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+
+      for (int x = 0; x < mrow; x++){
+      	for (int y = 0; y < mcol; y++){
+	  printf("%.1f ", clustMatrix[x][y]);
+
+	}
+	printf("\n");
+      }
+      std::cout << "end of cluster" << std::endl;
       if (icol == 2) {
 	clustMatrix[irow][icol] = 0;
 	std::cout << "clustMatrix for mcol/2 is " << clustMatrix[irow][icol] << std::endl;
