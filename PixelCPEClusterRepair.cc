@@ -277,14 +277,13 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
 
     if (mcol > 3 && mrow <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
 
-      for (int x = 0; x < mrow; x++){
-      	for (int y = 0; y < mcol; y++){
-	  printf("%.1f ", clustMatrix[x][y]);
+      //      for (int x = 0; x < mrow; x++){
+      //      	for (int y = 0; y < mcol; y++){
+      //	  printf("%.1f ", clustMatrix[x][y]);
 
-	}
-	printf("\n");
-      }
-      std::cout << "end of cluster" << std::endl;
+      //	}
+      //	printf("\n");
+      //      }
       if (icol == 2) {
 	clustMatrix[irow][icol] = 0;
 	std::cout << "clustMatrix for mcol/2 is " << clustMatrix[irow][icol] << std::endl;
@@ -295,6 +294,7 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
       if (icol == 3) {
 	std::cout << "clustMatrix for mcol/2+1 is " << clustMatrix[irow][icol] << std::endl;
       }
+      std::cout << "split cluster here" << std::endl;
     }
     else{ continue;}
   }
@@ -614,7 +614,15 @@ void PixelCPEClusterRepair::checkRecommend2D(DetParam const& theDetParam,
   float qratio = theClusterParam.theCluster->charge() / templ.qavg();
 
   //  if (nydiff > maxSizeMismatchInY_ && qratio < minChargeRatio_) {
-  if (int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+  int mrow = 0, mcol = 0;
+  for (int i = 0; i != theClusterParam.theCluster->size(); ++i) {
+    auto pix = theClusterParam.theCluster->pixel(i);
+    int irow = int(pix.x);
+    int icol = int(pix.y);
+    mrow = std::max(mrow, irow);
+    mcol = std::max(mcol, icol);
+  }
+  if (mcol > 3 && mrow <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
     // If the cluster is shorter than expected and has less charge, likely
     // due to truncated cluster, try 2D reco
 
