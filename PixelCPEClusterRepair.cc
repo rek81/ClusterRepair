@@ -297,7 +297,10 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
     }
     else{ continue;}
   }
-  std::cout << "split cluster here" << std::endl;
+  DetId id = (theDetParam.theDet->geographicalId());
+  if (mcol > 3 && mrow <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+    std::cout << "split cluster here" << std::endl;
+  }
   // &&& Save for later: fillClustMatrix( float * clustMatrix );
 
   //--- Save a copy of clustMatrix into clustMatrix2
@@ -394,9 +397,10 @@ void PixelCPEClusterRepair::callTempReco1D(DetParam const& theDetParam,
   //--- Check exit status
   if
     UNLIKELY(theClusterParam.ierr != 0) {
+      std::cout << "reconstruction failed with error " << theClusterParam.ierr << std::endl;
       LogDebug("PixelCPEClusterRepair::localPosition")
           << "reconstruction failed with error " << theClusterParam.ierr << "\n";
-
+      
       theClusterParam.probabilityX_ = theClusterParam.probabilityY_ = theClusterParam.probabilityQ_ = 0.f;
       theClusterParam.qBin_ = 0;
 
