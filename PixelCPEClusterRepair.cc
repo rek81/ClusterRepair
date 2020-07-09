@@ -294,10 +294,10 @@ LocalPoint PixelCPEClusterRepair::localPosition(DetParam const& theDetParam, Clu
       if (icol == 3) {
 	std::cout << "clustMatrix for mcol/2+1 is " << clustMatrix[irow][icol] << std::endl;
       }
-      std::cout << "split cluster here" << std::endl;
     }
     else{ continue;}
   }
+  std::cout << "split cluster here" << std::endl;
   // &&& Save for later: fillClustMatrix( float * clustMatrix );
 
   //--- Save a copy of clustMatrix into clustMatrix2
