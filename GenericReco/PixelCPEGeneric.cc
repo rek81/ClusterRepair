@@ -426,22 +426,26 @@ void PixelCPEGeneric::collect_edge_charges(DetParam const& theDetParam, ClusterP
     auto const& pixel = theClusterParam.theCluster->pixel(i);
     // ggiurgiu@fnal.gov: add pixel charge truncation
     int pix_adc = pixel.adc;
-    if (UseErrorsFromTemplates_ && TruncatePixelCharge_)
+    if (UseErrorsFromTemplates_ && TruncatePixelCharge_){
       pix_adc = std::min(pix_adc, theClusterParam.pixmx);
-
-    for (int x = 0; x < xmax-xmin; x++){
-      theClusterParam.hasBadPixels_ = true;
-      if (pixel.y == ((ymax-ymin)/2) && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
-	pix_adc = 0;
-	//	std::cout << "pixel y is " << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
-      }
-      if (pixel.y == ((ymax-ymin)/2 + 1) && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
-	//	std::cout << "pixel y is " << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
-      }
-      if (pixel.y == ((ymax-ymin)/2 -1 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel)){
-	//	std::cout << "pixel y is " << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
-      }
     }
+    //    for (int x = 0; x < (xmax-xmin); x++){
+    //    if ((ymax-ymin) > 3 && (xmax-xmin) <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+    if ((ymax-ymin) > 3 && (xmax-xmin) <= 4 && int(ttopo_.layer(id)) == 1 && id.subdetId() == PixelSubdetector::PixelBarrel){
+      theClusterParam.hasBadPixels_ = true;
+      //      std::cout << "mcol is " << (ymax-ymin) << " and mrow is " << (xmax-xmax) << std::endl;
+      if (pixel.y == 2){
+	//	pix_adc = 0;
+	std::cout << "pixel y is " << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
+     }
+      if (pixel.y == 1){
+	std::cout << "pixel y for -1 is " << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
+      }
+      if (pixel.y == 3){
+      	std::cout << "pixel y for +1 is" << pixel.y << ", pixel x is " << pixel.x << " and cluster is " << i << ", charge at this pixel is " << pix_adc << std::endl;
+      }
+    }	  
+    //    }
     // X projection
     if (pixel.x == xmin){
       Q_f_X += pix_adc;
